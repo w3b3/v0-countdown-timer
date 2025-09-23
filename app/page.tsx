@@ -1,445 +1,623 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
-import { Clock, Calendar, Star, Heart, Zap, Sparkles, Sun, Moon, Coffee, Home, Utensils } from "lucide-react"
-
-interface TimeOfDay {
-  period: string
-  colors: string
-  icon: React.ReactNode
-  emoji: string
-  message: string
-}
+import { Linkedin, Github, MessageCircle, Mail } from "lucide-react"
 
 export default function CountdownPage() {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  })
-
   const [mounted, setMounted] = useState(false)
-  const [isSunday, setIsSunday] = useState(false)
-  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay | null>(null)
-  const [confetti, setConfetti] = useState<Array<{ id: number; x: number; y: number; color: string; delay: number }>>(
-    [],
-  )
-
-  // Fun URL parameter check
-  const [secretUnlocked, setSecretUnlocked] = useState(false)
+  const [showEmailModal, setShowEmailModal] = useState(false)
+  const [captchaQuestion, setCaptchaQuestion] = useState("")
+  const [captchaAnswer, setCaptchaAnswer] = useState(0)
+  const [userCaptchaAnswer, setUserCaptchaAnswer] = useState("")
+  const [emailResult, setEmailResult] = useState("")
+  const [liquidHeight, setLiquidHeight] = useState(0)
+  const [overflowActive, setOverflowActive] = useState(false)
+  const [countdownText, setCountdownText] = useState("")
 
   useEffect(() => {
     setMounted(true)
-
-    // Check for secret URL parameters
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search)
-      const secretParams = [
-        "domingo",
-        "party",
-        "unlock",
-        "sunday",
-        "festa",
-        "diversao",
-        "magic",
-        "secret",
-        "tatame",
-        "especial",
-        "vip",
-      ]
-
-      const hasSecret = secretParams.some(
-        (param) =>
-          urlParams.has(param) ||
-          urlParams.get(param) === "true" ||
-          urlParams.get(param) === "sunday" ||
-          urlParams.get(param) === "domingo",
-      )
-
-      setSecretUnlocked(hasSecret)
-    }
-
-    // Generate confetti particles
-    const particles = Array.from({ length: 50 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      color: ["#ff6b6b", "#4ecdc4", "#45b7d1", "#96ceb4", "#feca57", "#ff9ff3", "#54a0ff"][
-        Math.floor(Math.random() * 7)
-      ],
-      delay: Math.random() * 3,
-    }))
-    setConfetti(particles)
   }, [])
 
+  // Visual Countdown Timer
   useEffect(() => {
-    const updateTimeAndCountdown = () => {
+    if (!mounted) return
+
+    const updateVisualCountdown = () => {
       const now = new Date()
-      const currentHour = now.getHours()
-      const currentDay = now.getDay() // 0 = Sunday, 1 = Monday, etc.
+      const nextSunday = new Date()
 
-      // Determine time of day
-      let currentTimeOfDay: TimeOfDay
-
-      if (currentHour >= 0 && currentHour < 5) {
-        // Late night / Very early morning
-        currentTimeOfDay = {
-          period: "madrugada",
-          colors: "from-indigo-900 via-purple-900 to-slate-900",
-          icon: <Moon className="h-6 w-6 text-blue-200" />,
-          emoji: "🌙",
-          message: "Noite silenciosa",
-        }
-      } else if (currentHour >= 5 && currentHour < 8) {
-        // Dawn / Early morning
-        currentTimeOfDay = {
-          period: "amanhecer",
-          colors: "from-orange-300 via-pink-400 to-purple-500",
-          icon: <Sun className="h-6 w-6 text-orange-300" />,
-          emoji: "🌅",
-          message: "Novo dia nascendo",
-        }
-      } else if (currentHour >= 8 && currentHour < 11) {
-        // Morning / Breakfast
-        currentTimeOfDay = {
-          period: "manhã",
-          colors: "from-yellow-300 via-orange-400 to-red-400",
-          icon: <Coffee className="h-6 w-6 text-amber-600" />,
-          emoji: "☕",
-          message: "Hora do café",
-        }
-      } else if (currentHour >= 11 && currentHour < 14) {
-        // Lunch time
-        currentTimeOfDay = {
-          period: "almoço",
-          colors: "from-blue-400 via-cyan-400 to-teal-400",
-          icon: <Utensils className="h-6 w-6 text-orange-500" />,
-          emoji: "🍽️",
-          message: "Hora do almoço",
-        }
-      } else if (currentHour >= 14 && currentHour < 17) {
-        // Afternoon
-        currentTimeOfDay = {
-          period: "tarde",
-          colors: "from-amber-400 via-orange-500 to-red-500",
-          icon: <Sun className="h-6 w-6 text-yellow-500" />,
-          emoji: "☀️",
-          message: "Tarde ensolarada",
-        }
-      } else if (currentHour >= 17 && currentHour < 20) {
-        // Evening / Going home
-        currentTimeOfDay = {
-          period: "entardecer",
-          colors: "from-orange-500 via-red-500 to-purple-600",
-          icon: <Home className="h-6 w-6 text-orange-400" />,
-          emoji: "🏠",
-          message: "Voltando pra casa",
-        }
-      } else if (currentHour >= 20 && currentHour < 23) {
-        // Night / Dinner
-        currentTimeOfDay = {
-          period: "noite",
-          colors: "from-purple-600 via-indigo-700 to-slate-800",
-          icon: <Utensils className="h-6 w-6 text-purple-300" />,
-          emoji: "🌆",
-          message: "Noite aconchegante",
-        }
+      // Find next Sunday
+      const daysUntilSunday = (7 - now.getDay()) % 7
+      if (daysUntilSunday === 0 && now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
+        nextSunday.setDate(now.getDate() + 7)
+      } else if (daysUntilSunday === 0) {
+        nextSunday.setDate(now.getDate() + 7)
       } else {
-        // Late night / Bedtime
-        currentTimeOfDay = {
-          period: "hora de dormir",
-          colors: "from-slate-800 via-gray-900 to-black",
-          icon: <Moon className="h-6 w-6 text-gray-300" />,
-          emoji: "😴",
-          message: "Hora de descansar",
-        }
+        nextSunday.setDate(now.getDate() + daysUntilSunday)
       }
 
-      setTimeOfDay(currentTimeOfDay)
-
-      // Check if it's Sunday OR secret is unlocked
-      if (currentDay === 0 || secretUnlocked) {
-        setIsSunday(true)
-        return
-      }
-
-      setIsSunday(false)
-
-      // Calculate next Sunday at 00:00
-      const daysUntilSunday = 7 - currentDay
-      const nextSunday = new Date(now)
-      nextSunday.setDate(now.getDate() + daysUntilSunday)
       nextSunday.setHours(0, 0, 0, 0)
 
-      const difference = nextSunday.getTime() - now.getTime()
+      const timeLeft = nextSunday.getTime() - now.getTime()
+      const totalWeekTime = 7 * 24 * 60 * 60 * 1000
+      const timeElapsed = totalWeekTime - timeLeft
+      const progress = Math.min(timeElapsed / totalWeekTime, 1)
 
-      if (difference > 0) {
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24))
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+      // Update background liquid height
+      const newLiquidHeight = Math.max(0, Math.min(100, progress * 100))
+      setLiquidHeight(newLiquidHeight)
 
-        setTimeLeft({ days, hours, minutes, seconds })
+      // Update countdown info
+      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+
+      // Handle overflow when Sunday arrives
+      if (timeLeft <= 0) {
+        setOverflowActive(true)
+        setCountdownText("🎉 Sunday overflow!")
+        setLiquidHeight(100)
+      } else if (progress > 0.95) {
+        setCountdownText(`Almost overflowing... ${hours}h remaining`)
+      } else if (days > 0) {
+        setCountdownText(`${Math.round(progress * 100)}% filled • ${days} day${days !== 1 ? 's' : ''} until Sunday`)
       } else {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+        setCountdownText(`${Math.round(progress * 100)}% filled • ${hours}h until Sunday`)
       }
     }
 
-    updateTimeAndCountdown()
-    const interval = setInterval(updateTimeAndCountdown, 1000)
+    updateVisualCountdown()
+    const interval = setInterval(updateVisualCountdown, 1000)
 
     return () => clearInterval(interval)
-  }, [secretUnlocked])
+  }, [mounted])
+
+  // Email Modal Functions
+  const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10) + 1
+    const num2 = Math.floor(Math.random() * 10) + 1
+    const answer = num1 + num2
+    setCaptchaAnswer(answer)
+    setCaptchaQuestion(`${num1} + ${num2} =`)
+    setUserCaptchaAnswer("")
+    setEmailResult("")
+  }
+
+  const openEmailModal = () => {
+    generateCaptcha()
+    setShowEmailModal(true)
+  }
+
+  const closeEmailModal = () => {
+    setShowEmailModal(false)
+    setUserCaptchaAnswer("")
+    setEmailResult("")
+  }
+
+  const verifyCaptcha = () => {
+    const userAnswer = parseInt(userCaptchaAnswer)
+    if (userAnswer === captchaAnswer) {
+      setEmailResult(`
+        <div style="background: rgba(76, 175, 80, 0.1); border: 2px solid #4CAF50; padding: 1rem; border-radius: 10px; margin-top: 1rem; font-weight: 400; color: #2E7D32;">
+          ✅ Email verified: <strong>iam@w-b.dev</strong>
+          <br><small>Click to copy to clipboard</small>
+        </div>
+      `)
+    } else {
+      setEmailResult(`
+        <div style="color: #d32f2f; margin-top: 1rem;">
+          ❌ Incorrect answer. Please try again.
+        </div>
+      `)
+      generateCaptcha()
+    }
+  }
+
+  const copyToClipboard = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText('iam@w-b.dev').then(() => {
+        setEmailResult(emailResult + '<br><small style="color: green;">📋 Copied to clipboard!</small>')
+      })
+    }
+  }
+
+  // Handle Enter key for captcha
+  const handleCaptchaKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      verifyCaptcha()
+    }
+  }
 
   if (!mounted) {
     return null
   }
 
-  // Sunday Special Page (or Secret Unlocked)
-  if (isSunday) {
-    const sundayColors = timeOfDay
-      ? `from-cyan-300 via-pink-300 to-yellow-300`
-      : "from-cyan-300 via-pink-300 to-yellow-300"
-
-    return (
-      <div
-        className={`min-h-screen bg-gradient-to-br ${sundayColors} relative overflow-hidden`}
-        style={{ fontFamily: "Comic Sans MS, cursive" }}
-      >
-        {/* Time of Day Indicator - Floating */}
-        {timeOfDay && (
-          <div className="fixed top-4 right-4 z-10 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 text-sm font-bold text-gray-800">
-            <span className="text-lg">{timeOfDay.emoji}</span>
-            <span>{timeOfDay.message}</span>
-          </div>
-        )}
-
-        {/* Secret Unlock Indicator */}
-        {secretUnlocked && (
-          <div className="fixed top-4 left-4 z-10 bg-yellow-400/90 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 text-sm font-bold text-gray-800 animate-pulse">
-            <span className="text-lg">🔓</span>
-            <span>Modo Secreto Ativado!</span>
-          </div>
-        )}
-
-        {/* Confetti Animation */}
-        {confetti.map((particle) => (
-          <div
-            key={particle.id}
-            className="absolute w-3 h-3 rounded-full animate-bounce"
-            style={{
-              left: `${particle.x}%`,
-              top: `${particle.y}%`,
-              backgroundColor: particle.color,
-              animationDelay: `${particle.delay}s`,
-              animationDuration: "2s",
-            }}
-          />
-        ))}
-
-        {/* Windows 95 Style Container */}
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="bg-gray-300 border-4 border-t-white border-l-white border-r-gray-600 border-b-gray-600 p-8 max-w-4xl mx-auto shadow-2xl">
-            {/* Title Bar */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 mb-6 flex items-center justify-between border-2 border-t-blue-400 border-l-blue-400 border-r-blue-900 border-b-blue-900">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-red-500 border border-red-700"></div>
-                <span className="font-bold text-sm">
-                  DOMINGO.EXE - A vida é curta! {secretUnlocked && "🔓 MODO SECRETO"}
-                </span>
-              </div>
-              <div className="flex gap-1">
-                <div className="w-4 h-4 bg-gray-300 border border-gray-500 flex items-center justify-center text-xs">
-                  _
-                </div>
-                <div className="w-4 h-4 bg-gray-300 border border-gray-500 flex items-center justify-center text-xs">
-                  □
-                </div>
-                <div className="w-4 h-4 bg-red-500 border border-red-700 flex items-center justify-center text-xs text-white">
-                  ×
-                </div>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="text-center space-y-6">
-              <div className="flex items-center justify-center gap-4 mb-6">
-                <Heart className="h-12 w-12 text-red-500 animate-pulse" />
-                <h1 className="text-6xl font-bold text-purple-800 drop-shadow-lg">
-                  {secretUnlocked ? "MODO SECRETO!" : "É DOMINGO!"}
-                </h1>
-                <Sparkles className="h-12 w-12 text-yellow-500 animate-spin" />
-              </div>
-
-              <div className="bg-yellow-200 border-4 border-t-yellow-100 border-l-yellow-100 border-r-yellow-400 border-b-yellow-400 p-6 text-left">
-                <h2 className="text-2xl font-bold text-red-600 mb-4 flex items-center gap-2">
-                  <Zap className="h-6 w-6" />
-                  {secretUnlocked ? "VOCÊ DESCOBRIU O SEGREDO!" : "ALERTA IMPORTANTE!"}
-                </h2>
-                <div className="space-y-3 text-lg text-gray-800">
-                  {secretUnlocked ? (
-                    <>
-                      <p>
-                        🎉 <strong>PARABÉNS!</strong> Você encontrou o código secreto!
-                      </p>
-                      <p>🔍 Pessoas curiosas como você merecem recompensas especiais!</p>
-                      <p>🎯 Você pode acessar este modo a qualquer hora com: ?domingo=true</p>
-                      <p>🤫 Compartilhe o segredo apenas com pessoas especiais!</p>
-                    </>
-                  ) : (
-                    <>
-                      <p>
-                        🎉 <strong>PARABÉNS!</strong> Você sobreviveu a mais uma semana!
-                      </p>
-                      <p>⏰ A vida é MUITO curta para desperdiçar tempo esperando...</p>
-                      <p>🔄 As coisas mudam TODOS OS DIAS (inclusive este site!)</p>
-                      <p>💫 Aproveite este domingo como se fosse o último!</p>
-                      <p>🚀 Amanhã tudo recomeça... mas hoje é SEU!</p>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              <div className="bg-blue-100 border-4 border-t-blue-50 border-l-blue-50 border-r-blue-300 border-b-blue-300 p-4">
-                <p className="text-xl text-blue-800 font-bold">
-                  🎯 MISSÃO: {secretUnlocked ? "Espalhar a magia!" : "Fazer algo que te faça sorrir!"}
-                </p>
-              </div>
-
-              {/* Retro Button */}
-              <div className="flex justify-center">
-                <a
-                  href={`https://wa.me/5511974007727?text=${encodeURIComponent(
-                    secretUnlocked
-                      ? "Oi! Descobri o modo secreto do site! 🔓✨ Como faço para saber mais?"
-                      : "Oi! Adorei o domingo especial do site! 🎉",
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-gray-300 border-4 border-t-white border-l-white border-r-gray-600 border-b-gray-600 px-8 py-4 text-black font-bold text-lg hover:bg-gray-200 active:border-t-gray-600 active:border-l-gray-600 active:border-r-white active:border-b-white transition-all duration-100 flex items-center gap-2"
-                >
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488" />
-                  </svg>
-                  {secretUnlocked ? "CONTAR O SEGREDO!" : "COMPARTILHAR A ALEGRIA!"}
-                </a>
-              </div>
-
-              <div className="text-sm text-gray-600 mt-8">
-                <p>
-                  💡 Este site muda toda semana...{" "}
-                  {secretUnlocked ? "Mas você já sabe o truque! 😉" : "Volte segunda-feira para uma nova surpresa!"}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  // Regular Countdown Page (Monday-Saturday)
-  const backgroundGradient = timeOfDay ? timeOfDay.colors : "from-slate-900 via-purple-900 to-slate-900"
-
   return (
-    <div
-      className={`min-h-screen bg-gradient-to-br ${backgroundGradient} flex items-center justify-center p-4 transition-all duration-1000`}
-    >
-      {/* Time of Day Indicator - Floating */}
-      {timeOfDay && (
-        <div className="fixed top-4 right-4 z-10 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 text-sm font-medium text-white/80">
-          {timeOfDay.icon}
-          <span>{timeOfDay.message}</span>
-        </div>
-      )}
+    <>
+      <style jsx>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
 
-      <div className="max-w-4xl mx-auto text-center">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <Star className="h-8 w-8 text-yellow-400 mr-2" />
-            <h1 className="text-4xl md:text-6xl font-bold text-white">Algo Incrível</h1>
-            <Star className="h-8 w-8 text-yellow-400 ml-2" />
-          </div>
-          <p className="text-xl md:text-2xl text-purple-200 mb-2">está chegando</p>
-          <div className="flex items-center justify-center text-purple-300">
-            <Calendar className="h-5 w-5 mr-2" />
-            <span className="text-lg">Próximo Domingo</span>
-          </div>
-        </div>
+        body {
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+          font-weight: 200;
+          background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 25%, #fecfef 50%, #c3ec52 75%, #4facfe 100%);
+          min-height: 100vh;
+          width: 100vw;
+          overflow: hidden;
+          position: relative;
+        }
 
-        {/* Countdown Timer */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 md:p-12 mb-8 border border-white/20">
-          <div className="flex items-center justify-center mb-6">
-            <Clock className="h-6 w-6 text-purple-300 mr-2" />
-            <h2 className="text-2xl font-semibold text-white">Contagem Regressiva</h2>
-          </div>
+        .background-cup {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 80vmin;
+          height: 80vmin;
+          z-index: 1;
+          opacity: 0.15;
+        }
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            <div className="bg-white/5 rounded-xl p-4 md:p-6 border border-white/10">
-              <div className="text-3xl md:text-5xl font-bold text-white mb-2">
-                {timeLeft.days.toString().padStart(2, "0")}
-              </div>
-              <div className="text-purple-300 text-sm md:text-base uppercase tracking-wide">Dias</div>
-            </div>
+        .cup {
+          position: relative;
+          width: 100%;
+          height: 70%;
+          border: 8px solid rgba(255, 255, 255, 0.6);
+          border-bottom: 12px solid rgba(255, 255, 255, 0.7);
+          border-radius: 0 0 30% 30%;
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(40px);
+          overflow: hidden;
+          margin: 0 auto;
+        }
 
-            <div className="bg-white/5 rounded-xl p-4 md:p-6 border border-white/10">
-              <div className="text-3xl md:text-5xl font-bold text-white mb-2">
-                {timeLeft.hours.toString().padStart(2, "0")}
-              </div>
-              <div className="text-purple-300 text-sm md:text-base uppercase tracking-wide">Horas</div>
-            </div>
+        .cup::before {
+          content: '';
+          position: absolute;
+          top: -8px;
+          left: -8px;
+          right: -8px;
+          height: 5%;
+          background: rgba(255, 255, 255, 0.7);
+          border-radius: 20px 20px 0 0;
+        }
 
-            <div className="bg-white/5 rounded-xl p-4 md:p-6 border border-white/10">
-              <div className="text-3xl md:text-5xl font-bold text-white mb-2">
-                {timeLeft.minutes.toString().padStart(2, "0")}
-              </div>
-              <div className="text-purple-300 text-sm md:text-base uppercase tracking-wide">Minutos</div>
-            </div>
+        .cup-handle {
+          position: absolute;
+          right: -15%;
+          top: 25%;
+          width: 12%;
+          height: 35%;
+          border: 8px solid rgba(255, 255, 255, 0.6);
+          border-left: none;
+          border-radius: 0 40px 40px 0;
+          background: transparent;
+        }
 
-            <div className="bg-white/5 rounded-xl p-4 md:p-6 border border-white/10">
-              <div className="text-3xl md:text-5xl font-bold text-white mb-2">
-                {timeLeft.seconds.toString().padStart(2, "0")}
-              </div>
-              <div className="text-purple-300 text-sm md:text-base uppercase tracking-wide">Segundos</div>
-            </div>
-          </div>
-        </div>
+        .liquid {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: linear-gradient(45deg, #4facfe 0%, #00f2fe 50%, #4facfe 100%);
+          background-size: 300% 300%;
+          animation: liquidShimmer 4s ease-in-out infinite;
+          transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+          border-radius: 0 0 25% 25%;
+          height: ${liquidHeight}%;
+        }
 
-        {/* Call to Action */}
-        <div className="text-center">
-          <p className="text-lg md:text-xl text-purple-200 mb-6">
-            Prepare-se para algo extraordinário. A espera valerá a pena.
-          </p>
-          <div className="flex justify-center">
-            <a
-              href="https://wa.me/5511974007727?text=Oi.%20Estou%20interessado%20em%20acompanhar%20o%20lan%C3%A7amento."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488" />
-              </svg>
-              Falar no WhatsApp
-            </a>
-          </div>
-        </div>
+        .liquid::before {
+          content: '';
+          position: absolute;
+          top: -3%;
+          left: 0;
+          right: 0;
+          height: 6%;
+          background: radial-gradient(ellipse 100% 50% at center, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+          border-radius: 50%;
+          animation: wave 3s ease-in-out infinite;
+        }
 
-        {/* Decorative Elements */}
-        <div className="mt-12 flex justify-center space-x-2">
-          {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"
-              style={{ animationDelay: `${i * 0.2}s` }}
-            />
-          ))}
+        .overflow {
+          position: absolute;
+          top: -3%;
+          left: -5%;
+          right: -5%;
+          height: 8%;
+          background: linear-gradient(45deg, #4facfe 0%, #00f2fe 50%, #4facfe 100%);
+          background-size: 300% 300%;
+          animation: liquidShimmer 4s ease-in-out infinite;
+          border-radius: 50px;
+          opacity: 0;
+          transform: scaleY(0);
+          transform-origin: bottom;
+          transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .overflow.active {
+          opacity: 0.8;
+          transform: scaleY(1);
+          animation: liquidShimmer 4s ease-in-out infinite, overflow 1.5s ease-in-out infinite;
+        }
+
+        .main-content {
+          position: relative;
+          z-index: 10;
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          padding: 0 5vw;
+        }
+
+        .name {
+          font-size: clamp(4rem, 12vw, 8rem);
+          font-weight: 100;
+          color: rgba(0, 0, 0, 0.8);
+          margin-bottom: 2vh;
+          letter-spacing: -0.02em;
+          line-height: 0.9;
+        }
+
+        .subtitle {
+          font-size: clamp(1rem, 2.5vw, 1.8rem);
+          font-weight: 200;
+          color: rgba(0, 0, 0, 0.6);
+          margin-bottom: 4vh;
+          max-width: 60ch;
+          line-height: 1.4;
+        }
+
+        .social-links {
+          display: flex;
+          gap: 1.5vw;
+          margin-bottom: 6vh;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          max-width: 600px;
+        }
+
+        @media (max-width: 768px) {
+          .social-links {
+            flex-direction: column;
+            gap: 2vw;
+            width: 90vw;
+          }
+
+          .social-link {
+            width: 100%;
+            justify-content: center;
+          }
+        }
+
+        .social-link {
+          position: relative;
+          padding: 1.2rem 2.5rem;
+          border-radius: 15px;
+          text-decoration: none;
+          font-weight: 400;
+          font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          display: flex;
+          align-items: center;
+          gap: 0.8rem;
+          overflow: hidden;
+          border: 2px solid transparent;
+          cursor: pointer;
+        }
+
+        .social-link::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+          transition: left 0.6s;
+        }
+
+        .social-link:hover::before {
+          left: 100%;
+        }
+
+        .linkedin {
+          background: linear-gradient(135deg, #0077B5 0%, #005885 100%);
+          color: white;
+          box-shadow: 0 8px 25px rgba(0, 119, 181, 0.3);
+        }
+
+        .linkedin:hover {
+          transform: translateY(-3px) scale(1.05);
+          box-shadow: 0 15px 35px rgba(0, 119, 181, 0.4);
+        }
+
+        .github {
+          background: linear-gradient(135deg, #333 0%, #24292e 100%);
+          color: white;
+          box-shadow: 0 8px 25px rgba(51, 51, 51, 0.3);
+        }
+
+        .github:hover {
+          transform: translateY(-3px) scale(1.05);
+          box-shadow: 0 15px 35px rgba(51, 51, 51, 0.4);
+        }
+
+        .whatsapp {
+          background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+          color: white;
+          box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+        }
+
+        .whatsapp:hover {
+          transform: translateY(-3px) scale(1.05);
+          box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4);
+        }
+
+        .email {
+          background: linear-gradient(135deg, #EA4335 0%, #D33B2C 100%);
+          color: white;
+          box-shadow: 0 8px 25px rgba(234, 67, 53, 0.3);
+          cursor: pointer;
+        }
+
+        .email:hover {
+          transform: translateY(-3px) scale(1.05);
+          box-shadow: 0 15px 35px rgba(234, 67, 53, 0.4);
+        }
+
+        .icon {
+          width: 1.2em;
+          height: 1.2em;
+          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+
+        /* Email Modal */
+        .email-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.8);
+          backdrop-filter: blur(10px);
+          display: ${showEmailModal ? 'flex' : 'none'};
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+
+        .modal-content {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          padding: 3rem;
+          border-radius: 20px;
+          text-align: center;
+          max-width: 400px;
+          width: 90%;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+          font-size: 1.5rem;
+          font-weight: 300;
+          color: #333;
+          margin-bottom: 1rem;
+        }
+
+        .modal-text {
+          color: #666;
+          margin-bottom: 2rem;
+          font-weight: 200;
+        }
+
+        .captcha-container {
+          margin: 1.5rem 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 1rem;
+          font-size: 1.2rem;
+          font-weight: 400;
+        }
+
+        .captcha-input {
+          padding: 0.8rem;
+          border: 2px solid #ddd;
+          border-radius: 10px;
+          font-size: 1.1rem;
+          text-align: center;
+          width: 80px;
+        }
+
+        .modal-buttons {
+          display: flex;
+          gap: 1rem;
+          justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+          .modal-buttons {
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+
+          .modal-btn {
+            width: 100%;
+          }
+        }
+
+        .modal-btn {
+          padding: 0.8rem 1.5rem;
+          border: none;
+          border-radius: 10px;
+          font-weight: 400;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+          background: #4285f4;
+          color: white;
+        }
+
+        .btn-primary:hover {
+          background: #3367d6;
+        }
+
+        .btn-secondary {
+          background: #f8f9fa;
+          color: #333;
+          border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+          background: #e8eaed;
+        }
+
+        .countdown-info {
+          position: absolute;
+          bottom: 3vh;
+          left: 50%;
+          transform: translateX(-50%);
+          font-size: clamp(0.8rem, 1.2vw, 0.9rem);
+          font-weight: 200;
+          color: rgba(0, 0, 0, 0.5);
+          text-align: center;
+          z-index: 10;
+        }
+
+        @keyframes liquidShimmer {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+
+        @keyframes wave {
+          0%, 100% { transform: scaleX(1) scaleY(1); }
+          50% { transform: scaleX(1.05) scaleY(0.9); }
+        }
+
+        @keyframes overflow {
+          0%, 100% { transform: scaleY(1) scaleX(1); }
+          50% { transform: scaleY(0.9) scaleX(1.1); }
+        }
+
+        @media (max-width: 768px) {
+          .social-links {
+            gap: 3vw;
+            width: 90vw;
+          }
+
+          .social-link {
+            width: 100%;
+            justify-content: center;
+          }
+
+          .main-content {
+            padding: 0 8vw;
+          }
+
+          .modal-content {
+            width: 95%;
+            margin: 0 2.5%;
+          }
+        }
+
+        @media (max-height: 600px) {
+          .name {
+            margin-bottom: 1vh;
+          }
+
+          .subtitle {
+            margin-bottom: 2vh;
+          }
+
+          .social-links {
+            margin-bottom: 3vh;
+          }
+        }
+      `}</style>
+
+      <div className="background-cup">
+        <div className="cup">
+          <div className="cup-handle"></div>
+          <div className="liquid" id="background-liquid"></div>
+          <div className={`overflow ${overflowActive ? 'active' : ''}`} id="background-overflow"></div>
         </div>
       </div>
-    </div>
+
+      <main className="main-content">
+        <h1 className="name">Daniel Santos</h1>
+
+        <p className="subtitle">Let's connect and chat about life, work, and everything in between</p>
+
+        <div className="social-links">
+          <a href="https://www.linkedin.com/in/brasileiro" className="social-link linkedin" target="_blank">
+            <Linkedin className="icon" />
+            LinkedIn
+          </a>
+          <a href="https://github.com/w3b3" className="social-link github" target="_blank">
+            <Github className="icon" />
+            GitHub
+          </a>
+          <a href="https://wa.me/18199195996" className="social-link whatsapp" target="_blank">
+            <MessageCircle className="icon" />
+            WhatsApp
+          </a>
+          <div className="social-link email" onClick={openEmailModal}>
+            <Mail className="icon" />
+            Email
+          </div>
+        </div>
+
+      </main>
+
+      <div className="countdown-info" id="countdown-info">
+        {countdownText || "Cup filling until Sunday..."}
+      </div>
+
+      {/* Email Modal */}
+      <div className="email-modal" id="emailModal">
+        <div className="modal-content">
+          <h3 className="modal-title">Verify you're human</h3>
+          <p className="modal-text">Please solve this simple math problem to reveal my email address:</p>
+
+          <div className="captcha-container">
+            <span id="captcha-question">{captchaQuestion}</span>
+            <input
+              type="number"
+              className="captcha-input"
+              id="captcha-answer"
+              value={userCaptchaAnswer}
+              onChange={(e) => setUserCaptchaAnswer(e.target.value)}
+              onKeyPress={handleCaptchaKeyPress}
+              placeholder="?"
+            />
+          </div>
+
+          <div className="modal-buttons">
+            <button className="modal-btn btn-primary" onClick={verifyCaptcha}>Verify</button>
+            <button className="modal-btn btn-secondary" onClick={closeEmailModal}>Cancel</button>
+          </div>
+
+          <div
+            id="email-result"
+            dangerouslySetInnerHTML={{ __html: emailResult }}
+            onClick={emailResult.includes('iam@w-b.dev') ? copyToClipboard : undefined}
+            style={{ cursor: emailResult.includes('iam@w-b.dev') ? 'pointer' : 'default' }}
+          />
+        </div>
+      </div>
+    </>
   )
 }
