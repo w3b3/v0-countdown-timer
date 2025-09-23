@@ -1,3 +1,18 @@
+"use client";
+
+import { useEffect } from 'react';
+import { getFirebase } from '@/lib/firebase';
+import { logEvent, type Analytics } from 'firebase/analytics';
+
+let firebaseAnalytics: Analytics | null = null;
+
+async function ensureAnalyticsLoaded(): Promise<Analytics | null> {
+  if (firebaseAnalytics) return firebaseAnalytics;
+  const { analytics } = await getFirebase();
+  firebaseAnalytics = analytics;
+  return analytics;
+}
+
 // Enhanced link tracking function
 async function trackLinkClick(destination: string, platform: string) {
   const timestamp = new Date().toISOString();
@@ -13,6 +28,20 @@ async function trackLinkClick(destination: string, platform: string) {
       value: 1
     });
   }
+
+  // Send to Firebase Analytics (if supported)
+  try {
+    const analytics = await ensureAnalyticsLoaded();
+    if (analytics) {
+      logEvent(analytics, 'link_click', {
+        platform,
+        destination,
+        referrer,
+        user_agent: userAgent,
+        timestamp
+      });
+    }
+  } catch {}
 
   // Send to custom analytics endpoint
   try {
@@ -36,6 +65,11 @@ async function trackLinkClick(destination: string, platform: string) {
 }
 
 export default function HomePage() {
+
+  useEffect(() => {
+    // Warm up analytics on mount
+    ensureAnalyticsLoaded();
+  }, []);
 
   return (
     <main style={{
