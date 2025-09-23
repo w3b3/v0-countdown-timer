@@ -4,16 +4,16 @@ export default function HomePage() {
     <main style={{
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '100vh',
       fontFamily: 'system-ui, sans-serif',
-      padding: '2rem'
+      padding: '1rem',
+      maxWidth: '300px',
+      margin: 'auto',
     }}>
       <h1 style={{
         fontSize: '3rem',
         marginBottom: '1rem',
-        textAlign: 'center'
+        textAlign: 'center',
+        whiteSpace: 'nowrap'
       }}>
         Daniel Santos
       </h1>

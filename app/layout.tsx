@@ -16,7 +16,14 @@ export default function RootLayout({
     <html lang="en">
       <head>
       </head>
-      <body>
+      <body style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        overflow: 'hidden',
+      }}>
         {children}
         <Analytics />
       </body>
