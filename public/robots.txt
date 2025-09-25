@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Cloudflare optimizations
+Allow: /cdn-cgi/
+
+# Sitemap
+Sitemap: https://daniel-santos-simplest.web.app/sitemap.xml
+
+# Performance optimization
+Crawl-delay: 1

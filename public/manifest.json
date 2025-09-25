@@ -1,0 +1,16 @@
+{
+  "name": "Daniel Santos - Personal Site",
+  "short_name": "Daniel S",
+  "description": "Let's connect and chat about life, work, and everything in between",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0077B5",
+  "icons": [
+    {
+      "src": "/placeholder-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

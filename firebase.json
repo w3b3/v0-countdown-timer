@@ -13,24 +13,93 @@
       }
     ],
     "headers": [
+      // Cloudflare-optimized caching for static assets
       {
         "source": "**/*.@(js|css)",
         "headers": [
           {
             "key": "Cache-Control",
+            "value": "public, max-age=31536000, s-maxage=31536000, immutable"
+          },
+          {
+            "key": "CDN-Cache-Control",
+            "value": "max-age=31536000"
+          },
+          {
+            "key": "Cloudflare-CDN-Cache-Control",
             "value": "max-age=31536000"
           }
         ]
       },
       {
-        "source": "**/*.@(jpg|jpeg|gif|png|svg|ico|webp)",
+        "source": "**/*.@(jpg|jpeg|gif|png|svg|ico|webp|woff|woff2)",
         "headers": [
           {
             "key": "Cache-Control",
+            "value": "public, max-age=31536000, s-maxage=31536000, immutable"
+          },
+          {
+            "key": "CDN-Cache-Control",
             "value": "max-age=31536000"
           }
         ]
+      },
+      // Cloudflare-optimized HTML caching (shorter for dynamic content)
+      {
+        "source": "**/*.@(html)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=0, s-maxage=300, must-revalidate"
+          },
+          {
+            "key": "CDN-Cache-Control",
+            "value": "max-age=300"
+          },
+          {
+            "key": "Cloudflare-CDN-Cache-Control",
+            "value": "max-age=300"
+          }
+        ]
+      },
+      // Cloudflare security headers
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "DENY"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          },
+          {
+            "key": "Permissions-Policy",
+            "value": "geolocation=(), microphone=(), camera=()"
+          },
+          {
+            "key": "X-XSS-Protection",
+            "value": "1; mode=block"
+          }
+        ]
+      },
+      // Cloudflare performance optimizations
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "CF-RAY",
+            "value": "enabled"
+          }
+        ]
       }
-    ]
+    ],
+    // Enable compression
+    "gzip": true
   }
 }

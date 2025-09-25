@@ -12,6 +12,13 @@ const nextConfig = {
   output: 'export',
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
+  // Production optimizations
+  experimental: {
+    optimizeCss: true,
+  },
+  // Optimize build
+  poweredByHeader: false,
+  compress: true,
 }
 
 export default nextConfig

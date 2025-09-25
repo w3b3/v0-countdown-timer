@@ -1,0 +1,43 @@
+# Cloudflare-specific headers for optimal performance
+# Applied at the edge level
+
+# Enable Cloudflare features
+/*
+  CF-Cache-Status: HIT
+  CF-RAY: enabled
+  CF-Cache-Tag: static-content
+
+# Security headers optimized for Cloudflare
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# Performance optimizations
+/*
+  CF-Polish: lossless
+  CF-Mirage: true
+  CF-Cache-Everything: true
+
+# Mobile optimization
+/*
+  CF-Mobile-Redirect: false
+
+# Compression
+/*
+  CF-Brotli: true
+  Content-Encoding: br
+
+# Static assets optimization
+/static/*
+  Cache-Control: public, max-age=31536000, s-maxage=31536000, immutable
+  CDN-Cache-Control: max-age=31536000
+  Cloudflare-CDN-Cache-Control: max-age=31536000
+
+# HTML pages (shorter cache for dynamic content)
+/*.html
+  Cache-Control: public, max-age=0, s-maxage=300, must-revalidate
+  CDN-Cache-Control: max-age=300
+  Cloudflare-CDN-Cache-Control: max-age=300
