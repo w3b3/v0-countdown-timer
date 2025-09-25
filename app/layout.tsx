@@ -76,6 +76,9 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="format-detection" content="telephone=no" />
 
+        {/* Cloudflare country detection for localization */}
+        <meta name="cf-ipcountry" content="" />
+
         {/* Theme color - will be dynamically updated by ThemeColor component */}
         <ThemeColor />
       </head>

@@ -3,8 +3,11 @@
 import { useEffect } from 'react';
 import { initializePerformance, initializeAnalytics, getFirebase } from '../lib/firebase';
 import { initializePerformanceTracking } from '../lib/performance';
+import { useLocation } from '../lib/location';
 
 export default function HomePage() {
+  const { greeting, isLoading } = useLocation();
+
   // Initialize Firebase services and performance tracking on mount
   useEffect(() => {
     // Initialize Firebase app (for SSR compatibility)
@@ -21,7 +24,7 @@ export default function HomePage() {
   return (
     <main className="flex flex-col font-sans p-4 max-w-[300px] mx-auto">
       <h1 className="text-6xl mb-4 text-center">
-        👋🏼 Daniel S.
+        {isLoading ? '👋🏼 Hi' : greeting} Daniel S.
       </h1>
 
       {/* <p className="text-xl mb-8 text-center max-w-[600px]">
