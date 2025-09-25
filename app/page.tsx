@@ -17,16 +17,16 @@ export default function HomePage() {
         textAlign: 'center',
         whiteSpace: 'nowrap'
       }}>
-        Daniel Santos
+        👋🏼 Daniel S.
       </h1>
 
-      <p style={{
+      {/* <p style={{
         fontSize: '1.2rem',
         marginBottom: '2rem',
         textAlign: 'center',
         maxWidth: '600px'
       }}>
-        Let's connect!</p>
+        Let's connect!</p> */}
 
       <div style={{
         display: 'flex',
