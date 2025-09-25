@@ -79,7 +79,7 @@ export default function RootLayout({
         {/* Theme color - will be dynamically updated by ThemeColor component */}
         <ThemeColor />
       </head>
-      <body className="min-h-screen flex items-center justify-center bg-white text-black dark:bg-gray-900 dark:text-white" style={{colorScheme: 'light dark'}}>
+      <body className="min-h-screen flex items-center justify-center" style={{colorScheme: 'light dark'}}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

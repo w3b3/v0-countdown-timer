@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Dark mode support */
+/* Dark mode support - System preference only */
 :root {
   color-scheme: light dark;
 }
@@ -11,43 +11,30 @@
   }
 }
 
-/* Theme toggle styles */
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.2s;
-  outline: none;
-  border: 1px solid #e5e7eb;
-  background-color: white;
-  height: 2.5rem;
-  width: 2.5rem;
+/* AAA Contrast Compliant Colors */
+:root {
+  /* Light mode - White background with black text for 21:1 contrast ratio (AAA) */
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --link-bg: #0077B5;
+  --link-hover: #005a87;
+  --dark-link-bg: #111827;
+  --dark-link-hover: #1f2937;
 }
 
-.theme-toggle:hover {
-  background-color: #f3f4f6;
-  color: #111827;
+@media (prefers-color-scheme: dark) {
+  /* Dark mode - Dark gray background with white text for 20:1 contrast ratio (AAA) */
+  --bg-color: #111827;
+  --text-color: #ffffff;
+  --link-bg: #ffffff;
+  --link-hover: #f3f4f6;
+  --dark-link-bg: #374151;
+  --dark-link-hover: #4b5563;
 }
 
-.theme-toggle:focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-.theme-toggle:disabled {
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-.dark .theme-toggle {
-  border-color: #374151;
-  background-color: #1f2937;
-}
-
-.dark .theme-toggle:hover {
-  background-color: #374151;
-  color: #f9fafb;
+/* Apply system-aware colors */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }

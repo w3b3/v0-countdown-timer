@@ -1,15 +1,13 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useTheme } from 'next-themes'
 
 export function ThemeColor() {
-  const { theme, systemTheme } = useTheme()
-
   useEffect(() => {
     const updateThemeColor = () => {
-      const currentTheme = theme === 'system' ? systemTheme : theme
-      const themeColor = currentTheme === 'dark' ? '#111827' : '#0077B5'
+      // Always use system theme - no manual override
+      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+      const themeColor = isDarkMode ? '#111827' : '#ffffff'
 
       // Update or create theme-color meta tag
       let metaThemeColor = document.querySelector('meta[name="theme-color"]')
@@ -29,11 +27,19 @@ export function ThemeColor() {
         document.head.appendChild(metaStatusBar)
       }
 
-      metaStatusBar.content = currentTheme === 'dark' ? 'black-translucent' : 'default'
+      metaStatusBar.content = isDarkMode ? 'black-translucent' : 'default'
     }
 
     updateThemeColor()
-  }, [theme, systemTheme])
+
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleChange = () => updateThemeColor()
+
+    mediaQuery.addEventListener('change', handleChange)
+
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
 
   return null
 }

@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { initializePerformance, initializeAnalytics, getFirebase } from '../lib/firebase';
 import { initializePerformanceTracking } from '../lib/performance';
-import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function HomePage() {
   // Initialize Firebase services and performance tracking on mount
@@ -21,12 +20,9 @@ export default function HomePage() {
 
   return (
     <main className="flex flex-col font-sans p-4 max-w-[300px] mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-6xl mb-4 text-center flex-1">
-          👋🏼 Daniel S.
-        </h1>
-        <ThemeToggle />
-      </div>
+      <h1 className="text-6xl mb-4 text-center">
+        👋🏼 Daniel S.
+      </h1>
 
       {/* <p className="text-xl mb-8 text-center max-w-[600px]">
         Let's connect!
@@ -37,7 +33,20 @@ export default function HomePage() {
           href="https://www.linkedin.com/in/brasileiro?utm_source=personal-site&utm_medium=link&utm_campaign=contact-links"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-3 px-4 py-3 bg-[#0077B5] hover:bg-[#0077B5]/90 text-white no-underline rounded-md transition-colors"
+          className="flex items-center gap-3 px-4 py-3 no-underline rounded-md transition-colors"
+          style={{
+            backgroundColor: 'var(--link-bg)',
+            color: 'var(--text-color)',
+            border: '1px solid var(--link-bg)'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--link-hover)';
+            e.currentTarget.style.borderColor = 'var(--link-hover)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--link-bg)';
+            e.currentTarget.style.borderColor = 'var(--link-bg)';
+          }}
         >
           <span className="text-lg">🔗</span>
           <span>LinkedIn</span>
@@ -75,7 +84,20 @@ export default function HomePage() {
           href="https://tatame0.com?utm_source=personal-site&utm_medium=link&utm_campaign=contact-links"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-3 px-4 py-3 bg-[#111827] hover:bg-[#111827]/90 text-white no-underline rounded-md transition-colors"
+          className="flex items-center gap-3 px-4 py-3 no-underline rounded-md transition-colors"
+          style={{
+            backgroundColor: 'var(--dark-link-bg)',
+            color: 'var(--text-color)',
+            border: '1px solid var(--dark-link-bg)'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--dark-link-hover)';
+            e.currentTarget.style.borderColor = 'var(--dark-link-hover)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--dark-link-bg)';
+            e.currentTarget.style.borderColor = 'var(--dark-link-bg)';
+          }}
         >
           <span className="text-lg">🥋</span>
           <span>Tatame0 - the best jiu-jitsu school app in the world</span>
@@ -85,7 +107,20 @@ export default function HomePage() {
           href="https://willis-brown.com?utm_source=personal-site&utm_medium=link&utm_campaign=contact-links"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-3 px-4 py-3 bg-[#222] hover:bg-[#222]/90 text-white no-underline rounded-md transition-colors"
+          className="flex items-center gap-3 px-4 py-3 no-underline rounded-md transition-colors"
+          style={{
+            backgroundColor: 'var(--dark-link-bg)',
+            color: 'var(--text-color)',
+            border: '1px solid var(--dark-link-bg)'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--dark-link-hover)';
+            e.currentTarget.style.borderColor = 'var(--dark-link-hover)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--dark-link-bg)';
+            e.currentTarget.style.borderColor = 'var(--dark-link-bg)';
+          }}
         >
           <span className="text-lg">🏢</span>
           <span>Willis Brown Inc.</span>
