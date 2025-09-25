@@ -2,18 +2,21 @@
 
 /* System-aware theming with AAA contrast compliance - FIXED VERSION */
 :root {
-  /* Light mode - AAA compliant colors (21:1 contrast ratio) */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --text-primary: #000000; /* Pure black for maximum contrast */
-  --text-secondary: #000000; /* Pure black for consistency */
-  --border-color: #000000;
-  --link-primary: #0000ff; /* Pure blue for better visibility */
-  --link-primary-hover: #0000cc;
-  --link-secondary: #000000;
-  --link-secondary-hover: #333333;
-  --success-color: #008000;
-  --error-color: #ff0000;
+  /* Light mode — improved, accessible color palette */
+  --bg-primary: #ffffff; /* page background */
+  --bg-secondary: #f7f9fb; /* subtle card/background contrast */
+  --text-primary: #0b1220; /* near-black for less glare than pure #000 */
+  --text-secondary: #334155; /* muted dark blue-gray for secondary text */
+  --border-color: #e6edf3; /* soft border that reads on white */
+  --link-primary: #0b60ff; /* vivid blue that maintains contrast */
+  --link-primary-hover: #084de6; /* slightly darker on hover */
+  --link-secondary: var(--bg-secondary); /* secondary button/card background */
+  --link-secondary-hover: #e2e8f0; /* slightly darker/lighter hover for secondary */
+  --success-color: #046c43; /* dark green for good contrast */
+  --error-color: #b91c1c; /* accessible strong red */
+  /* Button foregrounds for primary/secondary buttons (adjust per theme below) */
+  --btn-on-link-primary: #ffffff;
+  --btn-on-link-secondary: #0b1220;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -49,8 +52,8 @@ html[class~="dark"] {
 
 /* Apply colors with proper contrast - FORCE APPLICATION */
 body {
-  background-color: var(--bg-primary) !important;
-  color: var(--text-primary) !important;
+  background-color: var(--bg-primary) ;
+  color: var(--text-primary) ;
   transition: background-color 0.3s ease, color 0.3s ease;
   font-family: system-ui, -apple-system, sans-serif;
   line-height: 1.6;
@@ -58,27 +61,26 @@ body {
 
 /* Fallback for when CSS variables don't load */
 body:not([style*="--bg-primary"]) {
-  background-color: #ffffff !important;
-  color: #000000 !important;
+  background-color: #ffffff ;
+  color: #000000 ;
 }
 
 @media (prefers-color-scheme: dark) {
   body:not([style*="--bg-primary"]) {
-    background-color: #000000 !important;
-    color: #ffffff !important;
+    background-color: #000000 ;
+    color: #ffffff ;
   }
 }
 
 h1 {
-  color: var(--text-primary) !important;
+  color: var(--text-primary) ;
   font-weight: 700;
   text-align: center;
 }
 
-/* Ensure all text has proper contrast - FORCE OVERRIDE */
-* {
-  color: inherit !important;
-}
+/* Ensure all text has proper contrast: do NOT force color on every element.
+   Component rules should decide their own foregrounds so buttons/links can
+   pick contrasting text for their backgrounds. */
 
 /* Link styling with AAA contrast */
 a {
@@ -94,16 +96,16 @@ a:hover {
 
 /* Layout styling - FORCE STYLES */
 main {
-  min-height: 100vh !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 1rem !important;
-  max-width: 300px !important;
-  margin: 0 auto !important;
-  background-color: var(--bg-primary) !important;
-  color: var(--text-primary) !important;
+  min-height: 100vh ;
+  display: flex ;
+  flex-direction: column ;
+  align-items: center ;
+  justify-content: center ;
+  padding: 1rem ;
+  max-width: 500px;
+  margin: 0 auto ;
+  background-color: var(--bg-primary) ;
+  color: var(--text-primary) ;
 }
 
 .greeting-section {
@@ -142,18 +144,20 @@ main {
 
 .secondary-link {
   background-color: var(--link-secondary);
-  color: var(--text-primary);
+  color: var(--btn-on-link-secondary);
+  border-color: var(--border-color);
 }
 
 .secondary-link:hover {
   background-color: var(--link-secondary-hover);
+  color: var(--btn-on-link-secondary);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
 }
 
 .linkedin-link {
   background-color: var(--link-primary);
-  color: var(--bg-primary);
+  color: var(--btn-on-link-primary);
   border-color: var(--link-primary);
 }
 
@@ -173,4 +177,22 @@ main {
 .text {
   flex: 1;
   text-align: left;
+}
+
+/* Avoid forcing color on every element (this made links/buttons unreadable).
+   Let elements inherit from body by default and explicitly style components. */
+* {
+  box-sizing: border-box;
+}
+
+/* We already set body color earlier; avoid forcing color on every descendant so
+   component rules like .linkedin-link/.secondary-link can override as intended. */
+/* (body { color: var(--text-primary) } remains earlier in the file) */
+
+/* Theme-specific button foreground adjustments for dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --btn-on-link-primary: #ffffff; /* keep white text on blue in dark */
+    --btn-on-link-secondary: #0b1220; /* dark text over light secondary in dark */
+  }
 }

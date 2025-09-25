@@ -165,3 +165,5 @@ For Cloudflare-specific issues:
 ---
 
 *This configuration is optimized for a static linktree-style website served behind Cloudflare proxy.*
+
+Domain: `https://w-b.dev`

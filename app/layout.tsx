@@ -17,11 +17,13 @@ export const metadata = {
     description: "Let's connect and chat about life, work, and everything in between",
     type: 'website',
     locale: 'en_US',
+    url: 'https://w-b.dev',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Daniel Santos - Let\'s Connect',
     description: "Let's connect and chat about life, work, and everything in between",
+    site: 'https://w-b.dev',
   },
   manifest: '/manifest.json',
   // Cloudflare-specific optimizations
@@ -49,6 +51,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/placeholder-logo.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/placeholder-logo.svg" />
+        <link rel="canonical" href="https://w-b.dev" />
         <meta name="theme-color" content="#0077B5" />
 
         {/* Cloudflare Web Analytics - Privacy-focused alternative to GA */}
