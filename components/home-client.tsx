@@ -5,7 +5,7 @@ import { initializePerformance, initializeAnalytics, getFirebase } from '@/lib/f
 import { initializePerformanceTracking } from '@/lib/performance'
 
 export default function HomeClient() {
-  const [greeting, setGreeting] = useState('👋🏼 Hi')
+  const [greeting, setGreeting] = useState('👋🏼,💻,👋🏼,🥋,👋🏼 ☕️')
 
   useEffect(() => {
     // Initialize Firebase app (client-safe)
@@ -27,23 +27,9 @@ export default function HomeClient() {
 
         if (cloudflareCountry) {
           const isBrazil = cloudflareCountry.toLowerCase() === 'br'
-          setGreeting(isBrazil ? '👋🏼 Oi' : '👋🏼 Hi!')
+          setGreeting(isBrazil ? '👋🏼 Oi, eu sou o Daniel' : '👋🏼 Hi, I\'m Daniel')
           return
         }
-
-        // Method 2: Use IP-based geolocation API as fallback
-        const response = await fetch('https://ipapi.co/json/')
-        if (response.ok) {
-          const data = await response.json()
-          const isBrazil = data.country_code === 'BR' || data.country_name === 'Brazil'
-          setGreeting(isBrazil ? '👋🏼 Oi' : '👋🏼 Hi!')
-          return
-        }
-
-        // Method 3: Use browser language as last resort
-        const browserLang = navigator.language || navigator.userLanguage
-        const isPortuguese = browserLang.startsWith('pt')
-        setGreeting(isPortuguese ? '👋🏼 Oi' : '👋🏼 Hi!')
 
       } catch (error) {
         console.warn('Failed to detect location, using default greeting:', error)
@@ -57,7 +43,7 @@ export default function HomeClient() {
   return (
     <main>
       <div className="greeting-section">
-        <h1>{greeting} Daniel S.</h1>
+        <h1>{greeting}</h1>
       </div>
 
       <div className="links-section">
