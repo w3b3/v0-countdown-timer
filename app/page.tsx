@@ -26,8 +26,7 @@ export default function HomePage() {
         textAlign: 'center',
         maxWidth: '600px'
       }}>
-        Let's connect and chat about life, work, and everything in between
-      </p>
+        Let's connect!</p>
 
       <div style={{
         display: 'flex',
@@ -53,7 +52,7 @@ export default function HomePage() {
           LinkedIn
         </a>
 
-        <a href="https://github.com/w3b3?utm_source=personal-site&utm_medium=link&utm_campaign=contact-links"
+        {/* <a href="https://github.com/w3b3?utm_source=personal-site&utm_medium=link&utm_campaign=contact-links"
            target="_blank"
            rel="noreferrer"
            style={{
@@ -68,9 +67,9 @@ export default function HomePage() {
            }}>
           <span>📁</span>
           GitHub
-        </a>
+        </a> */}
 
-        <a href="https://wa.me/18199195996?utm_source=personal-site&utm_medium=link&utm_campaign=contact-links"
+        {/* <a href="https://wa.me/18199195996?utm_source=personal-site&utm_medium=link&utm_campaign=contact-links"
            target="_blank"
            rel="noreferrer"
            style={{
@@ -85,9 +84,9 @@ export default function HomePage() {
            }}>
           <span>📱</span>
           WhatsApp
-        </a>
+        </a> */}
 
-        <a href="mailto:iam@w-b.dev?subject=Contact%20from%20Personal%20Site%20-%20utm_source=personal-site&utm_medium=link&utm_campaign=contact-links"
+        {/* <a href="mailto:iam@w-b.dev?subject=Contact%20from%20Personal%20Site%20-%20utm_source=personal-site&utm_medium=link&utm_campaign=contact-links"
            style={{
              display: 'flex',
              alignItems: 'center',
@@ -100,7 +99,7 @@ export default function HomePage() {
            }}>
           <span>✉️</span>
           Email
-        </a>
+        </a> */}
 
         <a href="https://tatame0.com?utm_source=personal-site&utm_medium=link&utm_campaign=contact-links"
            target="_blank"
@@ -116,7 +115,7 @@ export default function HomePage() {
              borderRadius: '8px'
            }}>
           <span>🥋</span>
-          Tatame0
+          Tatame0 - the best jiu-jitsu school app in the world
         </a>
 
         <a href="https://willis-brown.com?utm_source=personal-site&utm_medium=link&utm_campaign=contact-links"
@@ -133,7 +132,7 @@ export default function HomePage() {
              borderRadius: '8px'
            }}>
           <span>🏢</span>
-          Willis Brown
+          Willis Brown Inc.
         </a>
 
       </div>
