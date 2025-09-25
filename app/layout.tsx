@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
-import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'Daniel Santos',
+  description: 'Let\'s connect and chat about life, work, and everything in between',
 }
 
 export default function RootLayout({
@@ -25,7 +23,6 @@ export default function RootLayout({
         overflow: 'hidden',
       }}>
         {children}
-        <Analytics />
       </body>
     </html>
   )

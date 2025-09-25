@@ -1,12 +1,10 @@
 'use client';
 
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics';
 
 let appInstance: FirebaseApp | null = null;
-let analyticsInstance: Analytics | null = null;
 
-export async function getFirebase(): Promise<{ app: FirebaseApp; analytics: Analytics | null }> {
+export function getFirebase(): FirebaseApp {
   if (!appInstance) {
     appInstance = initializeApp({
       apiKey: 'AIzaSyCBiCKj-dMrsG7Uj8U789vpChOuhyXTCqg',
@@ -19,17 +17,7 @@ export async function getFirebase(): Promise<{ app: FirebaseApp; analytics: Anal
     });
   }
 
-  if (!analyticsInstance && typeof window !== 'undefined') {
-    try {
-      if (await isSupported()) {
-        analyticsInstance = getAnalytics(appInstance);
-      }
-    } catch {
-      analyticsInstance = null;
-    }
-  }
-
-  return { app: appInstance, analytics: analyticsInstance };
+  return appInstance;
 }
 
 
