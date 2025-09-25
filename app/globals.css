@@ -1,40 +1,161 @@
 @import "tailwindcss";
 
-/* Dark mode support - System preference only */
+/* System-aware theming with AAA contrast compliance */
 :root {
-  color-scheme: light dark;
+  /* Light mode - AAA compliant colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --text-primary: #000000;
+  --text-secondary: #1a1a1a;
+  --border-color: #e5e7eb;
+  --link-primary: #0066cc; /* Better contrast than #0077B5 */
+  --link-primary-hover: #004499;
+  --link-secondary: #1f2937;
+  --link-secondary-hover: #374151;
+  --success-color: #059669;
+  --error-color: #dc2626;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-  }
+  /* Dark mode - AAA compliant colors */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --border-color: #334155;
+  --link-primary: #3b82f6; /* Lighter blue for better contrast */
+  --link-primary-hover: #60a5fa;
+  --link-secondary: #64748b;
+  --link-secondary-hover: #94a3b8;
+  --success-color: #10b981;
+  --error-color: #ef4444;
 }
 
-/* AAA Contrast Compliant Colors */
-:root {
-  /* Light mode - White background with black text for 21:1 contrast ratio (AAA) */
-  --bg-color: #ffffff;
-  --text-color: #000000;
-  --link-bg: #0077B5;
-  --link-hover: #005a87;
-  --dark-link-bg: #111827;
-  --dark-link-hover: #1f2937;
+/* Also support class-based dark mode toggles (e.g. next-themes sets `class="dark"` on <html>) */
+html.dark,
+html[class~="dark"] {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --border-color: #334155;
+  --link-primary: #3b82f6;
+  --link-primary-hover: #60a5fa;
+  --link-secondary: #64748b;
+  --link-secondary-hover: #94a3b8;
+  --success-color: #10b981;
+  --error-color: #ef4444;
 }
 
-@media (prefers-color-scheme: dark) {
-  /* Dark mode - Dark gray background with white text for 20:1 contrast ratio (AAA) */
-  --bg-color: #111827;
-  --text-color: #ffffff;
-  --link-bg: #ffffff;
-  --link-hover: #f3f4f6;
-  --dark-link-bg: #374151;
-  --dark-link-hover: #4b5563;
-}
-
-/* Apply system-aware colors */
+/* Apply colors with proper contrast */
 body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+h1 {
+  color: var(--text-primary);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Ensure all text has proper contrast */
+* {
+  color: inherit;
+}
+
+/* Link styling with AAA contrast */
+a {
+  color: var(--link-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  color: var(--link-primary-hover);
+}
+
+/* Layout styling */
+main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.greeting-section {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.greeting-section h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.links-section {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Link styling */
+.links-section a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+  text-decoration: none;
+}
+
+.secondary-link {
+  background-color: var(--link-secondary);
+  color: var(--text-primary);
+}
+
+.secondary-link:hover {
+  background-color: var(--link-secondary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.linkedin-link {
+  background-color: var(--link-primary);
+  color: var(--bg-primary);
+  border-color: var(--link-primary);
+}
+
+.linkedin-link:hover {
+  background-color: var(--link-primary-hover);
+  color: var(--bg-primary);
+  border-color: var(--link-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.emoji {
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.text {
+  flex: 1;
+  text-align: left;
 }

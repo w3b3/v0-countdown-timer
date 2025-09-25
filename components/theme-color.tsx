@@ -7,7 +7,7 @@ export function ThemeColor() {
     const updateThemeColor = () => {
       // Always use system theme - no manual override
       const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
-      const themeColor = isDarkMode ? '#111827' : '#ffffff'
+      const themeColor = isDarkMode ? '#0f172a' : '#ffffff'
 
       // Update or create theme-color meta tag
       let metaThemeColor = document.querySelector('meta[name="theme-color"]')
